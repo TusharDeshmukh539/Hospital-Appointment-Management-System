@@ -6,11 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.utils import utc_now
 from app.db.base import Base, TimestampMixin
-from app.models.consultation import Consultation
-from app.models.doctor import Doctor
 from app.models.enums import AppointmentStatus
-from app.models.patient import Patient
-from app.models.slot import Slot
 
 
 class Appointment(TimestampMixin, Base):

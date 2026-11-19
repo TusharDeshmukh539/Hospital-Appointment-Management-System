@@ -1,10 +1,12 @@
-from datetime import date
+from datetime import date, datetime, time
 from typing import Optional
 
-from sqlalchemy import Date, ForeignKey, Text
+from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.utils import utc_now
 from app.db.base import Base, TimestampMixin
-from app.models.appointment import Appointment
+from app.models.enums import AppointmentStatus
 
 
 class Consultation(TimestampMixin, Base):
@@ -29,3 +31,4 @@ class Consultation(TimestampMixin, Base):
     @property
     def appointment_date(self) -> date:
         return self.appointment.slot.slot_date
+

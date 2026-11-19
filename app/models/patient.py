@@ -1,3 +1,4 @@
+"""patients table - demographics and medical profile of a patient."""
 from datetime import date
 from typing import Optional
 
@@ -5,8 +6,6 @@ from sqlalchemy import Date, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
-from app.models.user import User
-
 
 
 class Patient(TimestampMixin, Base):
