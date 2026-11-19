@@ -1,63 +1,62 @@
-from datetime import datetime
+from datetime import date, datetime, time
+from typing import Optional
 
-from sqlalchemy import DateTime, Text, Enum, ForeignKey, Index
+from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db.base import Base
+from app.core.utils import utc_now
+from app.db.base import Base, TimestampMixin
+from app.models.consultation import Consultation
+from app.models.doctor import Doctor
+from app.models.enums import AppointmentStatus
+from app.models.patient import Patient
+from app.models.slot import Slot
 
 
-class Appointment(Base):
+class Appointment(TimestampMixin, Base):
     __tablename__ = "appointments"
-
     __table_args__ = (
-        Index("idx_appointments_doctor_status", "doctor_id", "status"),
-        Index("idx_appointments_patient", "patient_id"),
+        CheckConstraint(
+            "status IN ('BOOKED', 'COMPLETED', 'CANCELLED', 'NO_SHOW')", name="status_valid"
+        ),
+        # Indexes requested in the case study (speed up the doctor's and patient's lists).
+        Index("ix_appointments_doctor_id_status", "doctor_id", "status"),
+        Index("ix_appointments_patient_id", "patient_id"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    slot_id: Mapped[int] = mapped_column(ForeignKey("slots.id"), index=True)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"))
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.id"))
+    status: Mapped[str] = mapped_column(String(20), default=AppointmentStatus.BOOKED.value)
+    booked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    cancelled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    reason: Mapped[Optional[str]] = mapped_column(String(255))  # reason for the visit
 
-    slot_id: Mapped[int] = mapped_column(
-        ForeignKey("slots.id"),
-        unique=True,
-        nullable=False
+    slot: Mapped["Slot"] = relationship()
+    patient: Mapped["Patient"] = relationship()
+    doctor: Mapped["Doctor"] = relationship()
+    consultation: Mapped[Optional["Consultation"]] = relationship(
+        back_populates="appointment", uselist=False
     )
 
-    patient_id: Mapped[int] = mapped_column(
-        ForeignKey("patients.id"),
-        nullable=False
-    )
+    # Convenience properties used by the response schemas.
+    @property
+    def doctor_name(self) -> str:
+        return self.doctor.user.full_name
 
-    doctor_id: Mapped[int] = mapped_column(
-        ForeignKey("doctors.id"),
-        nullable=False
-    )
+    @property
+    def patient_name(self) -> str:
+        return self.patient.user.full_name
 
-    status: Mapped[str] = mapped_column(
-        Enum(
-            "BOOKED",
-            "COMPLETED",
-            "CANCELLED",
-            "NO_SHOW",
-            name="appointment_status"
-        ),
-        default="BOOKED",
-        nullable=False
-    )
+    @property
+    def slot_date(self) -> date:
+        return self.slot.slot_date
 
-    booked_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow
-    )
+    @property
+    def start_time(self) -> time:
+        return self.slot.start_time
 
-    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime)
-    reason: Mapped[str | None] = mapped_column(Text)
-
-    slot = relationship("Slot", back_populates="appointment")
-    patient = relationship("Patient", back_populates="appointments")
-    doctor = relationship("Doctor", back_populates="appointments")
-
-    consultation = relationship(
-        "Consultation",
-        back_populates="appointment",
-        uselist=False
-    )
+    @property
+    def end_time(self) -> time:
+        return self.slot.end_time
