@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker
+from app.db.base import Base
 
 load_dotenv()
 
@@ -15,10 +16,6 @@ DATABASE_URL = (
     f"postgresql+psycopg://{DB_USER}:{DB_PASSWORD}"
     f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
-
-
-class Base(DeclarativeBase):
-    pass
 
 
 engine = create_engine(

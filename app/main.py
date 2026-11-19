@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.database import Base, engine
+from app.db.session import Base, engine
 from app import models
 
 # Create tables
