@@ -18,29 +18,7 @@ class AvailabilityTemplate(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.id"), index=True)
-    weekday: Mapped[int] = mapped_column(Integer)  # 0 = Monday ... 6 = Sunday
+    weekday: Mapped[int] = mapped_column(Integer)  
     start_time: Mapped[time] = mapped_column(Time)
     end_time: Mapped[time] = mapped_column(Time)
-    slot_minutes: Mapped[int] = mapped_column(Integer)  # length of one slot
-
-
-class Slot(TimestampMixin, Base):
-    """One bookable time slot of one doctor on one date."""
-
-    __tablename__ = "slots"
-    __table_args__ = (
-        # The primary defence against double booking: the database will never
-        # allow two slots with the same doctor, date and start time.
-        UniqueConstraint("doctor_id", "slot_date", "start_time"),
-        CheckConstraint("status IN ('FREE', 'BOOKED', 'BLOCKED')", name="status_valid"),
-        Index("ix_slots_doctor_id_slot_date", "doctor_id", "slot_date"),
-    )
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.id"))
-    slot_date: Mapped[date] = mapped_column(Date)
-    start_time: Mapped[time] = mapped_column(Time)
-    end_time: Mapped[time] = mapped_column(Time)
-    status: Mapped[str] = mapped_column(String(10), default=SlotStatus.FREE.value)
-
-    doctor: Mapped["Doctor"] = relationship()
+    slot_minutes: Mapped[int] = mapped_column(Integer)  
