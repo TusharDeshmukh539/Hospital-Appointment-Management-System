@@ -6,8 +6,9 @@ from sqlalchemy import and_, case, func, select
 from sqlalchemy.orm import Session
 
 from app.models.appointment import Appointment
-from app.models.availability_template import Slot
-from app.models.doctor import Doctor, Speciality
+from app.models.slot import Slot
+from app.models.doctor import Doctor
+from app.models.speciality import Speciality
 from app.models.enums import AppointmentStatus
 from app.models.user import User
 

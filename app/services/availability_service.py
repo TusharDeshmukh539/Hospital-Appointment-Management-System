@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from app.core.logging_config import audit_log
 from app.core.utils import utc_now_naive
 from app.exceptions import BadRequestError, ConflictError, NotFoundError
-from app.models.availability import AvailabilityTemplate, Slot
+from app.models.availability_template import AvailabilityTemplate
+from app.models.slot import Slot
 from app.models.enums import SlotStatus
 from app.models.user import User
 from app.repositories import availability_repo, slot_repo

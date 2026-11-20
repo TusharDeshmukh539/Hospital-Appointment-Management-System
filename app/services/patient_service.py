@@ -1,9 +1,3 @@
-"""Business logic for patients.
-
-Patient demographics are sensitive personal data:
-  * we never write them to the logs (only ids)
-  * error messages never contain them
-"""
 from typing import Optional
 
 from sqlalchemy.orm import Session

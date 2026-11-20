@@ -1,10 +1,3 @@
-"""Custom exception types.
-
-Services raise these exceptions when a business rule is broken.
-Services never use HTTP objects, so they never raise FastAPI's HTTPException.
-Instead, main.py has an exception handler that converts every AppError into
-a clean JSON response:  {"detail": "...", "code": "..."}.
-"""
 class AppError(Exception):
     """Base class for all our custom errors."""
 

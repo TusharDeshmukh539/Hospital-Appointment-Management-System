@@ -1,4 +1,3 @@
-"""Small dependencies shared by several routers."""
 from dataclasses import dataclass
 
 from fastapi import Query

@@ -1,8 +1,3 @@
-"""Business logic for consultations (diagnosis, prescription, follow-up).
-
-Clinical records are visible ONLY to the patient concerned and the assigned doctor.
-We never log diagnosis/prescription text - only ids.
-"""
 from datetime import date
 from typing import Optional
 
@@ -10,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.logging_config import audit_log
 from app.exceptions import ConflictError, ForbiddenError, NotFoundError
-from app.models.appointment import Consultation
+from app.models.consultation import Consultation
 from app.models.enums import AppointmentStatus, Role
 from app.models.user import User
 from app.repositories import appointment_repo, consultation_repo
@@ -44,8 +39,8 @@ def record_consultation(db: Session, user: User, appointment_id: int,
     )
     db.commit()
 
-    audit_log("consultation.create", user_id=user.id, consultation_id=consultation.id,
-              appointment_id=appointment_id)
+    # audit_log("consultation.create", user_id=user.id, consultation_id=consultation.id,
+    #           appointment_id=appointment_id)
     return consultation_repo.get_by_appointment_id(db, appointment_id)
 
 

@@ -5,7 +5,8 @@ from typing import Optional
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.doctor import Doctor, Speciality
+from app.models.doctor import Doctor
+from app.models.speciality import Speciality
 from app.models.user import User
 from app.repositories.pagination import apply_order, paginate
 

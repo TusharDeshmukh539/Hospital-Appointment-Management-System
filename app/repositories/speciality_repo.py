@@ -4,7 +4,8 @@ from typing import Optional
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.doctor import Doctor, Speciality
+from app.models.doctor import Doctor
+from app.models.speciality import Speciality
 from app.repositories.pagination import apply_order, paginate
 
 # Allowed values for ?sort_by= (a whitelist: users can never inject column names).

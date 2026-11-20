@@ -4,7 +4,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.core.security import require_role
+from app.core.dependencies import require_role
 from app.db.session import get_db
 from app.models.enums import Role
 from app.models.user import User

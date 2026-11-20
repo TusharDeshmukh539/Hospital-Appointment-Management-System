@@ -5,8 +5,9 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.appointment import Appointment, Consultation
-from app.models.availability_template import Slot
+from app.models.appointment import Appointment
+from app.models.consultation import Consultation
+from app.models.slot import Slot
 from app.models.doctor import Doctor
 from app.repositories.pagination import apply_order, paginate
 

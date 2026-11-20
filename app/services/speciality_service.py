@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.logging_config import audit_log
 from app.exceptions import ConflictError, NotFoundError
-from app.models.doctor import Speciality
+from app.models.speciality import Speciality
 from app.models.user import User
 from app.repositories import speciality_repo
 from app.schemas.common import make_page

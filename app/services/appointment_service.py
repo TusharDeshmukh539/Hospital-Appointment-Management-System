@@ -1,12 +1,3 @@
-"""Business logic for booking, rescheduling, cancelling and completing appointments.
-
-Business rules implemented here (numbers match the case study):
-  1. A slot holds at most ONE active appointment; booking a BOOKED/BLOCKED slot -> 409
-  2. Slots in the past are not bookable
-  3. Cancellation only up to a cut-off (default 2 hours before the slot); slot becomes FREE
-  4. Rescheduling is atomic: old slot freed + new slot booked in ONE transaction
-  5. A patient may hold at most one active appointment with the same doctor on the same day
-"""
 from datetime import timedelta
 from typing import Optional
 
@@ -17,7 +8,7 @@ from app.core.logging_config import audit_log
 from app.core.utils import slot_start_datetime, utc_now, utc_now_naive
 from app.exceptions import BadRequestError, ConflictError, NotFoundError
 from app.models.appointment import Appointment
-from app.models.availability_template import Slot
+from app.models.slot import Slot
 from app.models.enums import AppointmentStatus, SlotStatus
 from app.models.user import User
 from app.repositories import appointment_repo, slot_repo
@@ -28,7 +19,6 @@ from app.services.patient_service import get_my_patient_profile
 
 
 def _check_slot_is_bookable(slot: Optional[Slot]) -> Slot:
-    """Checks shared by booking and rescheduling."""
     if slot is None:
         raise NotFoundError("Slot not found")
     if not slot.doctor.user.is_active:
@@ -42,9 +32,6 @@ def _check_slot_is_bookable(slot: Optional[Slot]) -> Slot:
     return slot
 
 
-# ----------------------------------------------------------------------------
-# Patient actions
-# ----------------------------------------------------------------------------
 def book_appointment(db: Session, user: User, data: AppointmentCreate) -> Appointment:
     patient = get_my_patient_profile(db, user)
     slot = _check_slot_is_bookable(slot_repo.get_by_id(db, data.slot_id))
