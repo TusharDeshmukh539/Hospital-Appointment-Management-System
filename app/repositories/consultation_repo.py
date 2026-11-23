@@ -1,4 +1,3 @@
-"""Database access for the consultations table."""
 from datetime import date
 from typing import Optional
 
@@ -44,7 +43,6 @@ def create(db: Session, appointment_id: int, diagnosis: str, prescription: str,
 def list_for_patient(db: Session, patient_id: int, doctor_id: Optional[int],
                      from_date: Optional[date], to_date: Optional[date],
                      sort_order: str, page: int, size: int):
-    """A patient's own consultations (the patient_id filter is always applied)."""
     query = (
         select(Consultation)
         .join(Appointment, Consultation.appointment_id == Appointment.id)

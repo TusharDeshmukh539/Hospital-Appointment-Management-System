@@ -43,7 +43,6 @@ def list_templates(db: Session, user: User) -> list[AvailabilityTemplate]:
 
 def delete_template(db: Session, user: User, template_id: int) -> None:
     doctor = get_my_doctor_profile(db, user)
-    # Ownership check: the template must belong to THIS doctor.
     template = availability_repo.get_for_doctor(db, template_id, doctor.id)
     if template is None:
         raise NotFoundError("Availability not found")

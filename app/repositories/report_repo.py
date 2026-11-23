@@ -1,4 +1,3 @@
-"""Aggregate queries for the admin reports."""
 from datetime import date
 from typing import Optional
 
@@ -14,12 +13,6 @@ from app.models.user import User
 
 
 def _appointment_join_condition(base_condition, from_date: Optional[date], to_date: Optional[date]):
-    """Build the ON-condition used to LEFT JOIN appointments.
-
-    If a date range is given, only appointments whose slot date is inside the range
-    are joined. Doing this inside the join keeps doctors that have zero appointments
-    in the report (their counts are simply 0).
-    """
     if from_date is None and to_date is None:
         return base_condition
     slot_ids = select(Slot.id)
@@ -31,12 +24,10 @@ def _appointment_join_condition(base_condition, from_date: Optional[date], to_da
 
 
 def _count_status(status: AppointmentStatus):
-    """SQL:  COALESCE(SUM(CASE WHEN status = X THEN 1 ELSE 0 END), 0)"""
     return func.coalesce(func.sum(case((Appointment.status == status.value, 1), else_=0)), 0)
 
 
 def doctor_load(db: Session, from_date: Optional[date], to_date: Optional[date]) -> list[dict]:
-    """One row per doctor with the number of appointments in each status."""
     query = (
         select(
             Doctor.id.label("doctor_id"),
@@ -62,7 +53,6 @@ def doctor_load(db: Session, from_date: Optional[date], to_date: Optional[date])
 
 
 def speciality_demand(db: Session, from_date: Optional[date], to_date: Optional[date]) -> list[dict]:
-    """One row per speciality with the number of appointments booked with its doctors."""
     query = (
         select(
             Speciality.id.label("speciality_id"),

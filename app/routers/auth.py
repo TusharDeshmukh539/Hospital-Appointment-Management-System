@@ -12,8 +12,7 @@ from app.services import auth_service
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/register", response_model=UserOut, status_code=201,
-             summary="Register as a patient")
+@router.post("/register", response_model=UserOut, status_code=201, summary="Register as a patient")
 def register(data: RegisterRequest, db: Session = Depends(get_db)):
     return auth_service.register_patient(db, data)
 
@@ -22,7 +21,6 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
              dependencies=[Depends(login_rate_limit)])  # per-IP rate limit
 def login(request: Request, form: OAuth2PasswordRequestForm = Depends(),
           db: Session = Depends(get_db)):
-    # OAuth2 password flow: the form field is called "username" - we put the email in it.
     ip_address = request.client.host if request.client else "unknown"
     return auth_service.login(db, form.username, form.password, ip_address)
 

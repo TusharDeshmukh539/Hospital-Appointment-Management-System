@@ -1,4 +1,3 @@
-"""Database access for the users table. No business rules here."""
 from typing import Optional
 
 from sqlalchemy import select

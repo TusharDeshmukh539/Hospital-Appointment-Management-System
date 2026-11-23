@@ -70,8 +70,7 @@ def set_user_active(
     db: Session,
     admin: User,
     user_id: int,
-    active: bool,
-) -> User:
+    active: bool,) -> User:
     user = user_repo.get_by_id(db, user_id)
 
     if user is None:

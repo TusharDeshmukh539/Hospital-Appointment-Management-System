@@ -1,10 +1,3 @@
-"""Database access for the slots table.
-
-The most important functions here are the status changes (claim/release/block/unblock).
-Each one is a single UPDATE ... WHERE status = <expected status>.
-The database applies it atomically, so two people can never claim the same FREE slot:
-the first UPDATE changes 1 row, the second finds status != FREE and changes 0 rows.
-"""
 from datetime import date
 from typing import Optional
 
@@ -40,10 +33,6 @@ def add_many(db: Session, slots: list[Slot]) -> None:
 
 
 def _change_status(db: Session, slot_id: int, from_status: SlotStatus, to_status: SlotStatus) -> bool:
-    """Change the status only if it currently equals `from_status`.
-
-    Returns True if the slot was changed, False if it was in a different status.
-    """
     result = db.execute(
         update(Slot)
         .where(Slot.id == slot_id, Slot.status == from_status.value)
@@ -54,27 +43,22 @@ def _change_status(db: Session, slot_id: int, from_status: SlotStatus, to_status
 
 
 def claim_slot(db: Session, slot_id: int) -> bool:
-    """FREE -> BOOKED. Returns False if somebody else got the slot first."""
     return _change_status(db, slot_id, SlotStatus.FREE, SlotStatus.BOOKED)
 
 
 def release_slot(db: Session, slot_id: int) -> bool:
-    """BOOKED -> FREE (used by cancel and reschedule)."""
     return _change_status(db, slot_id, SlotStatus.BOOKED, SlotStatus.FREE)
 
 
 def block_slot(db: Session, slot_id: int) -> bool:
-    """FREE -> BLOCKED."""
     return _change_status(db, slot_id, SlotStatus.FREE, SlotStatus.BLOCKED)
 
 
 def unblock_slot(db: Session, slot_id: int) -> bool:
-    """BLOCKED -> FREE."""
     return _change_status(db, slot_id, SlotStatus.BLOCKED, SlotStatus.FREE)
 
 
 def block_free_slots_on_date(db: Session, doctor_id: int, slot_date: date) -> int:
-    """Block every FREE slot of the doctor on that date. Returns how many were blocked."""
     result = db.execute(
         update(Slot)
         .where(

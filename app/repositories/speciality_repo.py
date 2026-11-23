@@ -1,4 +1,3 @@
-"""Database access for the specialities table."""
 from typing import Optional
 
 from sqlalchemy import func, select
@@ -17,7 +16,6 @@ def get_by_id(db: Session, speciality_id: int) -> Optional[Speciality]:
 
 
 def get_by_name(db: Session, name: str) -> Optional[Speciality]:
-    """Case-insensitive lookup, so 'cardiology' finds 'Cardiology'."""
     return db.scalar(select(Speciality).where(func.lower(Speciality.name) == name.lower()))
 
 

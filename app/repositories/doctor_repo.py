@@ -40,7 +40,6 @@ def get_by_registration_no(db: Session, registration_no: str) -> Optional[Doctor
 
 def list_paginated(db: Session, speciality: Optional[str], name: Optional[str],
                    sort_by: str, sort_order: str, page: int, size: int):
-    # We join users and specialities so we can filter and sort by their columns.
     query = (
         select(Doctor)
         .join(User, Doctor.user_id == User.id)

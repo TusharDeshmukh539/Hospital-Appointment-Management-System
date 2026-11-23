@@ -57,7 +57,6 @@ def get_for_doctor(db: Session, appointment_id: int, doctor_id: int) -> Optional
 
 def patient_has_active_on_date(db: Session, patient_id: int, doctor_id: int, slot_date: date,
                                exclude_appointment_id: Optional[int] = None) -> bool:
-    """Does the patient already hold a BOOKED appointment with this doctor on this date?"""
     query = (
         select(func.count(Appointment.id))
         .select_from(Appointment)
@@ -76,12 +75,6 @@ def patient_has_active_on_date(db: Session, patient_id: int, doctor_id: int, slo
 
 def list_for_patient(db: Session, patient_id: int, when: str, status: Optional[str],
                      sort_by: str, sort_order: str, page: int, size: int):
-    """List a patient's appointments.
-
-    when = "upcoming": BOOKED and the slot has not started yet
-    when = "past":     everything else (finished, cancelled or already started)
-    when = "all":      no time filter
-    """
     now = utc_now_naive()
     slot_is_in_future = or_(
         Slot.slot_date > now.date(),
