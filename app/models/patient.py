@@ -1,4 +1,3 @@
-"""patients table - demographics and medical profile of a patient."""
 from datetime import date
 from typing import Optional
 
