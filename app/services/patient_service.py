@@ -12,7 +12,6 @@ from app.schemas.patient import PatientUpdate
 
 
 def get_my_patient_profile(db: Session, user: User) -> Patient:
-    """Find the patient profile of the logged-in patient (used by other services too)."""
     patient = patient_repo.get_by_user_id(db, user.id)
     if patient is None:
         raise NotFoundError("Patient profile not found")

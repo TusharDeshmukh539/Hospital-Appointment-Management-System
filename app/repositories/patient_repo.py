@@ -1,4 +1,3 @@
-"""Database access for the patients table."""
 from typing import Optional
 
 from sqlalchemy import func, select

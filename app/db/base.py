@@ -1,7 +1,6 @@
 from datetime import datetime
 from sqlalchemy import DateTime, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
 from app.core.utils import utc_now
 
 NAMING_CONVENTION = {

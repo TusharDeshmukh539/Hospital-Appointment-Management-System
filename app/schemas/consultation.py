@@ -1,4 +1,3 @@
-"""Schemas for consultations (clinical records)."""
 from datetime import date, datetime
 from typing import Optional
 
@@ -8,8 +7,6 @@ from app.schemas.common import RequestModel, ResponseModel
 
 
 class ConsultationCreate(RequestModel):
-    """Body of POST /appointments/{id}/consultation."""
-
     diagnosis: str = Field(min_length=1, max_length=5000)
     prescription: str = Field(min_length=1, max_length=5000)
     notes: Optional[str] = Field(default=None, max_length=5000)
@@ -18,7 +15,7 @@ class ConsultationCreate(RequestModel):
     @field_validator("follow_up_date")
     @classmethod
     def follow_up_in_future(cls, value: Optional[date]) -> Optional[date]:
-        if value is not None and value < date.today():
+        if value and value < date.today():
             raise ValueError("follow_up_date cannot be in the past")
         return value
 

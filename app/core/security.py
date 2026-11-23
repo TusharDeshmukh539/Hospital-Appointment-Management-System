@@ -1,18 +1,11 @@
 from datetime import timedelta
 from functools import lru_cache
-
-from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
-
 from app.core.config import get_settings
 from app.core.utils import utc_now
-from app.db.session import get_db
-from app.exceptions import ForbiddenError, UnauthorizedError
-from app.models.user import User
-from app.repositories import user_repo
+from app.exceptions import UnauthorizedError
 
 
 @lru_cache
@@ -38,22 +31,16 @@ def verify_password(
     )
 
 
-def create_access_token(
-    user_id: int,
-    role: str
-) -> str:
+def create_access_token(user_id: int, role: str) -> str:
     settings = get_settings()
 
-    expires_at = utc_now() + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expires_at = utc_now() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     payload = {
         "sub": str(user_id),
         "role": role,
         "exp": expires_at
     }
-
     return jwt.encode(
         payload,
         settings.JWT_SECRET_KEY,

@@ -27,7 +27,7 @@ patient_only = require_role(Role.PATIENT)
 doctor_only = require_role(Role.DOCTOR)
 
 
-# ---- Patient endpoints -----------------------------------------------------
+# Patient endpoints
 @router.post("", response_model=AppointmentOut, status_code=201,
              summary="Book a free slot (PATIENT)")
 def book_appointment(data: AppointmentCreate, db: Session = Depends(get_db),
@@ -52,8 +52,7 @@ def my_appointments(
     )
 
 
-# ---- Doctor endpoints ------------------------------------------------------
-# NOTE: "/doctor" is declared before the "/{appointment_id}/..." routes.
+# Doctor endpoints 
 @router.get("/doctor", response_model=Page[AppointmentOut],
             summary="My appointments for a day (DOCTOR)")
 def doctor_appointments(
@@ -70,7 +69,7 @@ def doctor_appointments(
     )
 
 
-# ---- Actions on one appointment ---------------------------------------------
+# Actions on appointment 
 @router.patch("/{appointment_id}/reschedule", response_model=AppointmentOut,
               summary="Move my appointment to another free slot (PATIENT, own)")
 def reschedule(appointment_id: int, data: AppointmentReschedule, db: Session = Depends(get_db),

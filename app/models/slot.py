@@ -8,12 +8,9 @@ from app.models.enums import SlotStatus
 
 
 class Slot(TimestampMixin, Base):
-    """One bookable time slot of one doctor on one date."""
 
     __tablename__ = "slots"
     __table_args__ = (
-        # The primary defence against double booking: the database will never
-        # allow two slots with the same doctor, date and start time.
         UniqueConstraint("doctor_id", "slot_date", "start_time"),
         CheckConstraint("status IN ('FREE', 'BOOKED', 'BLOCKED')", name="status_valid"),
         Index("ix_slots_doctor_id_slot_date", "doctor_id", "slot_date"),

@@ -1,5 +1,6 @@
-"""Schemas for the admin reports."""
 from app.schemas.common import ResponseModel
+
+
 class DoctorLoadItem(ResponseModel):
     doctor_id: int
     doctor_name: str
@@ -9,11 +10,13 @@ class DoctorLoadItem(ResponseModel):
     completed: int
     cancelled: int
     no_show: int
-    no_show_rate: float  # percent: no_show / (completed + no_show) * 100
+    # no_show / (completed + no_show) * 100
+    no_show_rate: float
 
 
 class NoShowRateReport(ResponseModel):
-    overall_no_show_rate: float  # percent over all doctors
+    # across all doctors
+    overall_no_show_rate: float
     doctors: list[DoctorLoadItem]
 
 

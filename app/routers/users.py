@@ -1,4 +1,3 @@
-"""Admin endpoints to activate / deactivate user accounts."""
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 

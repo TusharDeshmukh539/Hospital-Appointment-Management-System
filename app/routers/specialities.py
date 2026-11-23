@@ -1,4 +1,3 @@
-"""Speciality endpoints."""
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query, Response

@@ -8,7 +8,6 @@ from app.repositories import report_repo
 
 
 def _no_show_rate(completed: int, no_show: int) -> float:
-    """Percent of finished appointments where the patient did not come."""
     finished = completed + no_show
     if finished == 0:
         return 0.0  # avoid dividing by zero

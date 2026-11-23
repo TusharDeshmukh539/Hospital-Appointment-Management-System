@@ -1,4 +1,3 @@
-"""users table - everybody who can log in (admins, doctors, patients)."""
 from typing import Optional
 
 from sqlalchemy import Boolean, CheckConstraint, String, true
@@ -9,7 +8,6 @@ from app.db.base import Base, TimestampMixin
 
 class User(TimestampMixin, Base):
     __tablename__ = "users"
-    # The database itself refuses any role that is not one of these three.
     __table_args__ = (
         CheckConstraint("role IN ('ADMIN', 'DOCTOR', 'PATIENT')", name="role_valid"),
     )
@@ -23,6 +21,5 @@ class User(TimestampMixin, Base):
     # Soft delete: a deactivated user is kept in the database but cannot log in.
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
 
-    # One user can have ONE doctor profile or ONE patient profile (depending on role).
     doctor_profile: Mapped[Optional["Doctor"]] = relationship(back_populates="user", uselist=False)
     patient_profile: Mapped[Optional["Patient"]] = relationship(back_populates="user", uselist=False)

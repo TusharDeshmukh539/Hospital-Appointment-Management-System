@@ -35,7 +35,6 @@ app = FastAPI(
     ),
 )
 
-# --- CORS: only the origins listed in the environment may call the API from a browser ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -45,13 +44,8 @@ app.add_middleware(
 )
 
 
-# ---------------------------------------------------------------------------
-# Global exception handlers: every error becomes {"detail": ..., "code": ...}
-# and never exposes stack traces or SQL.
-# ---------------------------------------------------------------------------
 @app.exception_handler(AppError)
 async def handle_app_error(request: Request, exc: AppError):
-    """Our own business errors (raised by services)."""
     headers = {"WWW-Authenticate": "Bearer"} if exc.status_code == 401 else None
     return JSONResponse(
         status_code=exc.status_code, content={"detail": exc.detail, "code": exc.code}, headers=headers
@@ -70,11 +64,6 @@ async def handle_http_exception(request: Request, exc: StarletteHTTPException):
 
 @app.exception_handler(RequestValidationError)
 async def handle_validation_error(request: Request, exc: RequestValidationError):
-    """Pydantic found invalid input. We return only the field and a message.
-
-    We do NOT echo the submitted values: they could contain passwords or
-    sensitive patient data.
-    """
     errors = [
         {"field": ".".join(str(part) for part in error["loc"]), "message": error["msg"]}
         for error in exc.errors()
@@ -94,7 +83,6 @@ async def handle_integrity_error(request: Request, exc: IntegrityError):
 
 @app.exception_handler(SQLAlchemyError)
 async def handle_database_error(request: Request, exc: SQLAlchemyError):
-    # Only the error type is logged: the message may contain SQL with patient data.
     app_logger.error("Database error on %s %s (%s)", request.method, request.url.path, type(exc).__name__)
     return JSONResponse(
         status_code=500, content={"detail": "A database error occurred", "code": "DATABASE_ERROR"}
@@ -103,17 +91,13 @@ async def handle_database_error(request: Request, exc: SQLAlchemyError):
 
 @app.exception_handler(Exception)
 async def handle_unexpected_error(request: Request, exc: Exception):
-    """Last safety net for any bug we did not expect."""
     app_logger.error("Unexpected error on %s %s (%s)", request.method, request.url.path, type(exc).__name__)
     return JSONResponse(
         status_code=500, content={"detail": "Internal server error", "code": "INTERNAL_ERROR"}
     )
 
 
-# ---------------------------------------------------------------------------
-# Routers. "availability" must come before "doctors" so that /doctors/me/...
-# is matched before /doctors/{doctor_id}.
-# ---------------------------------------------------------------------------
+
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(users.router)

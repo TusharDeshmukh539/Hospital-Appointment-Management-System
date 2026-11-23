@@ -23,7 +23,6 @@ def record_consultation(db: Session, user: User, appointment_id: int,
     if appointment is None:
         raise NotFoundError("Appointment not found")
 
-    # Business rule 6: only for COMPLETED appointments
     if appointment.status != AppointmentStatus.COMPLETED.value:
         raise ConflictError("A consultation can only be recorded for a COMPLETED appointment")
     if consultation_repo.get_by_appointment_id(db, appointment_id) is not None:
@@ -39,8 +38,7 @@ def record_consultation(db: Session, user: User, appointment_id: int,
     )
     db.commit()
 
-    # audit_log("consultation.create", user_id=user.id, consultation_id=consultation.id,
-    #           appointment_id=appointment_id)
+    audit_log("consultation.create", user_id=user.id, consultation_id=consultation.id, appointment_id=appointment_id)
     return consultation_repo.get_by_appointment_id(db, appointment_id)
 
 

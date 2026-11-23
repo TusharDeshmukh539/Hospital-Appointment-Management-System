@@ -33,6 +33,6 @@ class Settings(BaseSettings):
         ]
 
 
-@lru_cache
+@lru_cache #ensures configuration is loaded only once for the lifetime of the application.
 def get_settings() -> Settings:
     return Settings()

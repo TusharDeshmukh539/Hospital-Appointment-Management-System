@@ -1,4 +1,3 @@
-"""Auth endpoints: register, login, current user. (Routers are thin: no SQL, no business rules.)"""
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session

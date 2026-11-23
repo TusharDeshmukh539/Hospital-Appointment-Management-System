@@ -1,7 +1,3 @@
-"""Doctor-only endpoints for weekly availability and slots (all under /doctors/me).
-
-This router is registered BEFORE the general doctors router in main.py.
-"""
 from datetime import date
 
 from fastapi import APIRouter, Depends, Query, Response

@@ -1,4 +1,3 @@
-"""Schemas for weekly availability and slots."""
 from datetime import date, time, timedelta
 
 from pydantic import Field, model_validator
@@ -6,13 +5,12 @@ from pydantic import Field, model_validator
 from app.models.enums import SlotStatus
 from app.schemas.common import RequestModel, ResponseModel
 
-MAX_GENERATE_DAYS = 60  # slots can be generated for at most 60 days at once
+
+MAX_GENERATE_DAYS = 60
 
 
 class AvailabilityCreate(RequestModel):
-    """Body of POST /doctors/me/availability."""
-
-    weekday: int = Field(ge=0, le=6, description="0 = Monday ... 6 = Sunday")
+    weekday: int = Field(ge=0, le=6)
     start_time: time
     end_time: time
     slot_minutes: int = Field(default=30, ge=5, le=240)
@@ -34,8 +32,6 @@ class AvailabilityOut(ResponseModel):
 
 
 class SlotGenerateRequest(RequestModel):
-    """Body of POST /doctors/me/slots/generate."""
-
     from_date: date
     to_date: date
 
@@ -43,25 +39,26 @@ class SlotGenerateRequest(RequestModel):
     def check_range(self):
         if self.to_date < self.from_date:
             raise ValueError("to_date must not be before from_date")
+
+        # prevent large slot generation requests
         if (self.to_date - self.from_date) > timedelta(days=MAX_GENERATE_DAYS - 1):
-            raise ValueError(f"Date range can be at most {MAX_GENERATE_DAYS} days")
+            raise ValueError(f"date range can be at most {MAX_GENERATE_DAYS} days")
+
         return self
 
 
 class SlotGenerateResult(ResponseModel):
-    created: int  # new slots saved
-    skipped: int  # slots skipped because they already exist / would overlap
+    created: int
+    skipped: int
 
 
 class BlockDateRequest(RequestModel):
-    """Body of POST /doctors/me/slots/block-date."""
-
     slot_date: date
 
 
 class BlockDateResult(ResponseModel):
-    blocked: int  # FREE slots that were blocked
-    already_booked: int  # BOOKED slots that could not be blocked
+    blocked: int
+    already_booked: int
 
 
 class SlotOut(ResponseModel):

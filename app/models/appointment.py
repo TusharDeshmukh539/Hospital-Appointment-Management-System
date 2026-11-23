@@ -15,7 +15,6 @@ class Appointment(TimestampMixin, Base):
         CheckConstraint(
             "status IN ('BOOKED', 'COMPLETED', 'CANCELLED', 'NO_SHOW')", name="status_valid"
         ),
-        # Indexes requested in the case study (speed up the doctor's and patient's lists).
         Index("ix_appointments_doctor_id_status", "doctor_id", "status"),
         Index("ix_appointments_patient_id", "patient_id"),
     )
@@ -36,7 +35,6 @@ class Appointment(TimestampMixin, Base):
         back_populates="appointment", uselist=False
     )
 
-    # Convenience properties used by the response schemas.
     @property
     def doctor_name(self) -> str:
         return self.doctor.user.full_name

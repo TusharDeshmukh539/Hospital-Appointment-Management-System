@@ -17,7 +17,6 @@ def health(db: Session = Depends(get_db)):
         db.execute(text("SELECT 1"))  # the cheapest possible query
         database_status = "up"
     except Exception as exc:
-        # Log only the error TYPE (the message could contain SQL and data).
         app_logger.error("Health check: database is down (%s)", type(exc).__name__)
         database_status = "down"
 
@@ -26,5 +25,4 @@ def health(db: Session = Depends(get_db)):
         "service": get_settings().APP_NAME,
         "database": database_status,
     }
-    # 503 tells load balancers that this instance is not healthy.
     return JSONResponse(status_code=200 if database_status == "up" else 503, content=body)

@@ -1,34 +1,26 @@
-"""Schemas for appointments."""
 from datetime import date, datetime, time
-from typing import Literal, Optional
+from typing import Optional, Literal
 
 from pydantic import Field
 
 from app.models.enums import AppointmentStatus
 from app.schemas.common import RequestModel, ResponseModel
 
-class AppointmentCreate(RequestModel):
-    """Body of POST /appointments."""
 
+class AppointmentCreate(RequestModel):
     slot_id: int = Field(gt=0)
     reason: Optional[str] = Field(default=None, max_length=255)
 
 
 class AppointmentReschedule(RequestModel):
-    """Body of PATCH /appointments/{id}/reschedule."""
-
     new_slot_id: int = Field(gt=0)
 
 
 class AppointmentStatusUpdate(RequestModel):
-    """Body of PATCH /appointments/{id}/status - a doctor can only set these two."""
-
     status: Literal["COMPLETED", "NO_SHOW"]
 
 
 class AppointmentOut(ResponseModel):
-    """Appointment details. It never contains clinical data (diagnosis etc.)."""
-
     id: int
     slot_id: int
     doctor_id: int

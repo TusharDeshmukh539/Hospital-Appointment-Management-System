@@ -1,11 +1,9 @@
-"""availability_templates and slots tables."""
-from datetime import date, time
+from datetime import time
 
-from sqlalchemy import CheckConstraint, Date, ForeignKey, Index, Integer, String, Time, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import CheckConstraint, ForeignKey, Integer, Time
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, TimestampMixin
-from app.models.enums import SlotStatus
 
 
 class AvailabilityTemplate(TimestampMixin, Base):

@@ -1,4 +1,3 @@
-"""Doctor endpoints."""
 from datetime import date
 from typing import Literal, Optional
 
@@ -40,8 +39,6 @@ def list_doctors(
     )
 
 
-# NOTE: "/me" routes must be declared BEFORE "/{doctor_id}", otherwise FastAPI
-# would try to read the word "me" as a doctor id.
 @router.get("/me", response_model=DoctorOut, summary="My doctor profile (DOCTOR)")
 def get_my_profile(db: Session = Depends(get_db), user: User = Depends(require_role(Role.DOCTOR))):
     return doctor_service.get_my_doctor_profile(db, user)

@@ -1,4 +1,3 @@
-"""Schemas for patients."""
 from datetime import date
 from typing import Literal, Optional
 
@@ -8,8 +7,6 @@ from app.schemas.common import PHONE_PATTERN, PersonName, RequestModel, Response
 
 
 class PatientUpdate(RequestModel):
-    """Body of PUT /patients/me - every field is optional."""
-
     full_name: Optional[PersonName] = None
     phone: Optional[str] = Field(default=None, pattern=PHONE_PATTERN)
     date_of_birth: Optional[date] = None
@@ -19,7 +16,7 @@ class PatientUpdate(RequestModel):
 
     @field_validator("date_of_birth")
     @classmethod
-    def dob_must_be_realistic(cls, value: Optional[date]) -> Optional[date]:
+    def validate_date_of_birth(cls, value: Optional[date]) -> Optional[date]:
         if value is not None and (value > date.today() or value.year < 1900):
             raise ValueError("date_of_birth must be a past date after 1900")
         return value

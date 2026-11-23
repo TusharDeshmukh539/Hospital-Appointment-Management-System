@@ -1,4 +1,3 @@
-"""Business logic for specialities (master data maintained by admins)."""
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -46,7 +45,6 @@ def delete_speciality(db: Session, admin: User, speciality_id: int) -> None:
     speciality = speciality_repo.get_by_id(db, speciality_id)
     if speciality is None:
         raise NotFoundError("Speciality not found")
-    # A speciality that doctors still use must not disappear.
     if speciality_repo.count_doctors(db, speciality_id) > 0:
         raise ConflictError("Speciality is used by doctors and cannot be deleted")
 

@@ -1,4 +1,3 @@
-"""Database access for the appointments table."""
 from datetime import date
 from typing import Optional
 
@@ -17,7 +16,6 @@ SORT_COLUMNS = {"date": Slot.slot_date, "booked_at": Appointment.booked_at}
 
 
 def _load_options():
-    """Load everything the AppointmentOut schema needs in one go."""
     return (
         joinedload(Appointment.slot),
         joinedload(Appointment.doctor).joinedload(Doctor.user),
